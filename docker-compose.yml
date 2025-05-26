@@ -40,23 +40,27 @@ services:
       - hive-server
       - hive-metastore
       - hive-metastore-postgresql
-      - database  # The DB Hue will use (added in Step 2)
+      - database
     volumes:
-      - D:\GitHub\docker-hadoop-spark\data\hue\hue-overrides.ini:/usr/share/hue/desktop/conf/z-hue.ini
+      - .\data\hue\hue-overrides.ini:/usr/share/hue/desktop/conf/z-hue-overrides.ini
     environment:
-      - HUE_DATABASE_NAME=hue
-      - HUE_DATABASE_USER=root
-      - HUE_DATABASE_PASSWORD=secret
+      - DATABASE_ENGINE=mysql
+      - DATABASE_NAME=hue
+      - DATABASE_USER=root
+      - DATABASE_PASSWORD=secret
+      - DATABASE_HOST=database
+      - DATABASE_PORT=3306
+      - HIVE_SERVER_HOST=hive-server
+      - HIVE_SERVER_PORT=10000
 
 
   database:
-    image: fjardim/mysql
+    image: mysql:5.7
     container_name: database
     hostname: database
     ports:
       - "33061:3306"
     environment:
-      MYSQL_ROOT_USER: root
       MYSQL_ROOT_PASSWORD: secret
       MYSQL_DATABASE: hue
       MYSQL_USER: root
@@ -67,9 +71,7 @@ services:
     command: >
       mysqld --innodb-flush-method=O_DSYNC
              --innodb-use-native-aio=OFF
-             --init-file /data/application/init.sql
-
-
+             --init-file /docker-entrypoint-initdb.d/init.sql
 
   resourcemanager:
     image: bde2020/hadoop-resourcemanager:2.0.0-hadoop3.2.1-java8
