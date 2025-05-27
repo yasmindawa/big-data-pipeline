@@ -212,7 +212,7 @@ CREATE EXTERNAL TABLE diagnosis_full (
   long_title STRING
 )
 STORED AS PARQUET
-LOCATION '/user/hive/warehouse/admissions/';
+LOCATION '/user/hive/warehouse/diagnosis_full/';
 ```
 
 ## MapReduce Job:
